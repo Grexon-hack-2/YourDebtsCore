@@ -10,7 +10,7 @@ namespace YourDebtsCore.Controllers
     {
         // GET: api/<DebtsController>
         [HttpGet]
-        public IEnumerable<string> GetAllDebts()
+        public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
         }
