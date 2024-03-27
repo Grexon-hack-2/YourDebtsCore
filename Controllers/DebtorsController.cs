@@ -1,18 +1,38 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using YourDebtsCore.Base.Models;
+using YourDebtsCore.Base.Validations;
+using YourDebtsCore.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace YourDebtsCore.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class DebtorsController : ControllerBase
     {
+
+        private readonly IDebtorsService _debtorsService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public DebtorsController(IDebtorsService debtorsService, IHttpContextAccessor httpContextAccessor)
+        {
+            _debtorsService = debtorsService;
+            _httpContextAccessor = httpContextAccessor; 
+        }
+
         // GET: api/<DebtorsController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        [Route("GetAllDebts")]
+        public IActionResult GetAllDebts()
         {
-            return new string[] { "value1", "value2" };
+            var context = _httpContextAccessor.HttpContext;
+            var (currentUser, expired) = ValidationToken.Handler(context);
+            if (expired) return Unauthorized("Token Expirado");
+
+            return Ok(_debtorsService.GetDebtors(currentUser.UserAdminID));
         }
 
         // GET api/<DebtorsController>/5
@@ -24,8 +44,14 @@ namespace YourDebtsCore.Controllers
 
         // POST api/<DebtorsController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        [Route("InsertClient")]
+        public IActionResult InsertClient([FromBody] DebtorModel value)
         {
+            var context = _httpContextAccessor.HttpContext;
+            var (currentUser, expired) = ValidationToken.Handler(context);
+            if (expired) return Unauthorized("Token Expirado");
+
+            return Ok(_debtorsService.AddNewClient(value, currentUser.UserAdminID));
         }
 
         // PUT api/<DebtorsController>/5
