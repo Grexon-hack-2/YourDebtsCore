@@ -36,10 +36,16 @@ namespace YourDebtsCore.Controllers
         }
 
         // GET api/<DebtorsController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet]
+        [Route("GetDataFullDebt")]
+        public async Task<IActionResult> GetDataFullDebt([FromQuery] Guid idClient)
         {
-            return "value";
+            if(string.IsNullOrEmpty(idClient.ToString()))
+            {
+                return BadRequest("El parametro es requerido, por favor ingrese uno valido");
+            }
+
+            return Ok(await _debtorsService.DataFullService(idClient));
         }
 
         // POST api/<DebtorsController>
