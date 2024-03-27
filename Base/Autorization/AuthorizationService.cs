@@ -35,7 +35,7 @@ namespace YourDebtsCore.Base.Autorization
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = claims,
-                Expires = DateTime.UtcNow.AddMinutes(1),
+                Expires = DateTime.UtcNow.AddMonths(1),
                 SigningCredentials = credencialesToken
             };
 

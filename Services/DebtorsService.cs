@@ -7,6 +7,7 @@ namespace YourDebtsCore.Services
     {
         List<DebtorModel> GetDebtors(Guid ID);
         string AddNewClient(DebtorModel debtor, Guid userId);
+        Task<DetailedList> DataFullService(Guid idClient);
     }
     public class DebtorsService : IDebtorsService
     {
@@ -24,6 +25,11 @@ namespace YourDebtsCore.Services
         public string AddNewClient(DebtorModel debtor, Guid userId)
         {
             return _repository.AddNewClient(debtor, userId);
+        }
+
+        public Task<DetailedList> DataFullService(Guid idClient)
+        {
+            return _repository.DataFullRepository(idClient);
         }
     }
 }

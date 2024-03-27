@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using System.Data;
 using System.Data.SqlClient;
 using YourDebtsCore.Base.Models;
 
@@ -8,6 +9,7 @@ namespace YourDebtsCore.Repositories
     {
         List<DebtorModel> GetAll(Guid ID);
         string AddNewClient(DebtorModel debtor, Guid userId);
+        Task<DetailedList> DataFullRepository(Guid idClient);
     }
     public class DebtorsRepository: IDebtorsRepository
     {
@@ -60,6 +62,27 @@ namespace YourDebtsCore.Repositories
 
                 if (rowAffect == 0) return "Dato no insertado, intentelo de nuevo";
                 else return "Deudor ingresado satisfactoriamente";
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<DetailedList> DataFullRepository(Guid idClient)
+        {
+            try
+            {
+                using var connection = new SqlConnection(_connectionString);
+                connection.Open();
+                string sp = "GetDataFull_DebtClient";
+                var Data = await connection.QueryAsync<DetailedList>(sp, new {idClient} , commandType: CommandType.StoredProcedure);
+
+                return Data?.FirstOrDefault();
             }
             catch (SqlException ex)
             {
