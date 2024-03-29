@@ -8,6 +8,7 @@ namespace YourDebtsCore.Services
         List<DebtorModel> GetDebtors(Guid ID);
         string AddNewClient(DebtorModel debtor, Guid userId);
         Task<DetailedList> DataFullService(Guid idClient);
+        Task<string> DeleteDebtService(Guid id);
     }
     public class DebtorsService : IDebtorsService
     {
@@ -30,6 +31,11 @@ namespace YourDebtsCore.Services
         public Task<DetailedList> DataFullService(Guid idClient)
         {
             return _repository.DataFullRepository(idClient);
+        }
+
+        public async Task<string> DeleteDebtService(Guid id)
+        {
+            return await _repository.DeleteClientRepository(id);
         }
     }
 }
