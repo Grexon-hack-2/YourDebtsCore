@@ -10,6 +10,7 @@ namespace YourDebtsCore.Repositories
         List<DebtorModel> GetAll(Guid ID);
         string AddNewClient(DebtorModel debtor, Guid userId);
         Task<DetailedList> DataFullRepository(Guid idClient);
+        Task<string> DeleteClientRepository(Guid idClient);
     }
     public class DebtorsRepository: IDebtorsRepository
     {
@@ -83,6 +84,38 @@ namespace YourDebtsCore.Repositories
                 var Data = await connection.QueryAsync<DetailedList>(sp, new {idClient} , commandType: CommandType.StoredProcedure);
 
                 return Data?.FirstOrDefault();
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<string> DeleteClientRepository(Guid idClient)
+        {
+            try
+            {
+                using var connection = new SqlConnection(_connectionString);
+                await connection.OpenAsync();
+                string sp = "DeleteClientAndDebts";
+
+                SqlCommand command = new(sp, connection)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+                command.Parameters.AddWithValue("@idClient", idClient);
+
+                int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                if (rowsAffected > 0)
+                {
+                    return "El deudor a sido eliminado correctamente";
+                }
+                return "No existe registro del deudor en la base de datos";
             }
             catch (SqlException ex)
             {

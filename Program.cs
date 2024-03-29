@@ -18,12 +18,27 @@ builder.Services.AddSwaggerGen();
 var connString = builder.Configuration.GetConnectionString("Conn");
 var key = builder.Configuration.GetValue<string>("JwtSettings:key");
 
+// Register and login
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>(option => new AuthorizationService(new LoginRepository(connString),value: key));
-builder.Services.AddScoped<IDebtorsService, DebtorsService>();
-builder.Services.AddScoped<IDebtorsRepository, DebtorsRepository>(option => new DebtorsRepository(connString));
 builder.Services.AddScoped<ILoginRepository, LoginRepository>(option => new LoginRepository(connString));
 builder.Services.AddScoped<IRegisterService, RegisterService>();
 builder.Services.AddScoped<IRegisterRepository, RegisterRepository>(option => new RegisterRepository(connString));
+
+// Debtors
+builder.Services.AddScoped<IDebtorsService, DebtorsService>();
+builder.Services.AddScoped<IDebtorsRepository, DebtorsRepository>(option => new DebtorsRepository(connString));
+
+
+// Products
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>(option => new ProductRepository(connString));
+
+
+// Debt
+builder.Services.AddScoped<IDebtService, DebtService>();
+builder.Services.AddScoped<IDebtRepository, DebtRepository>(option => new DebtRepository(connString));
+
+
 builder.Services.AddHttpContextAccessor();
 
 var keyBytes = Encoding.ASCII.GetBytes(key);    
