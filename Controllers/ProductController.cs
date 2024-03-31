@@ -57,10 +57,12 @@ namespace YourDebtsCore.Controllers
         //{
         //}
 
-        //// DELETE api/<ProductController>/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
+        // DELETE api/<ProductController>/5
+        [HttpDelete("{idProduct}")]
+        [Route("DeleteProduct")]
+        public async Task<IActionResult> DeleteProduct([FromQuery] Guid idProduct)
+        {
+            return Ok(await _productService.DeleteProduct(idProduct));
+        }
     }
 }

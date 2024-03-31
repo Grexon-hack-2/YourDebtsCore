@@ -8,6 +8,7 @@ namespace YourDebtsCore.Repositories
     {
         Task<List<ProductModel>> GetProductList(Guid ID);
         Task<string> InsertProduct(ProductModel product, Guid idAdmin);
+        Task<string> DeleteProduct(Guid ID);
     }
     public class ProductRepository: IProductRepository
     {
@@ -73,6 +74,30 @@ namespace YourDebtsCore.Repositories
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<string> DeleteProduct(Guid ID)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connStringDB);
+                await conn.OpenAsync();
+
+                var sql = "DELETE Products WHERE ProductID = @ID";
+
+                var rowAffected = await conn.ExecuteAsync(sql, new {ID});
+
+                if (rowAffected > 0) return "Producto eliminado con exito";
+                else return "El producto no fue encontrado en la base de datos";
+            }
+            catch(SqlException ex)
+            {
+                throw new Exception($"No pudo ser eliminado el producto: {ID} | Error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"No pudo ser eliminado el producto: {ID} | Error: {ex.Message}");
             }
         }
     }

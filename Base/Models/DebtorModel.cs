@@ -16,5 +16,6 @@ namespace YourDebtsCore.Base.Models
 
         [Required(ErrorMessage = "El campo 'Debt' es obligatorio")]
         public decimal Debt { get; set; }
+        public decimal AmountPaid { get; set; }
     }
 }

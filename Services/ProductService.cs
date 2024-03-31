@@ -7,6 +7,7 @@ namespace YourDebtsCore.Services
     {
         Task<List<ProductModel>> GetProductsList(Guid id);
         Task<string> InsertProduct(ProductModel product, Guid idAdmin);
+        Task<string> DeleteProduct(Guid ID);
     }
     public class ProductService: IProductService
     {
@@ -24,6 +25,11 @@ namespace YourDebtsCore.Services
         public async Task<string> InsertProduct(ProductModel product, Guid idAdmin)
         {
             return await _repository.InsertProduct(product, idAdmin);
+        }
+
+        public async Task<string> DeleteProduct(Guid ID)
+        {
+            return await _repository.DeleteProduct(ID);
         }
     }
 }

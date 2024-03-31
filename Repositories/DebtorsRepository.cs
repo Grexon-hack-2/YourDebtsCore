@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Newtonsoft.Json;
 using System.Data;
 using System.Data.SqlClient;
 using YourDebtsCore.Base.Models;
@@ -81,9 +82,25 @@ namespace YourDebtsCore.Repositories
                 using var connection = new SqlConnection(_connectionString);
                 connection.Open();
                 string sp = "GetDataFull_DebtClient";
-                var Data = await connection.QueryAsync<DetailedList>(sp, new {idClient} , commandType: CommandType.StoredProcedure);
+                var Data = await connection.QueryAsync<DetailListInfoDB>(sp, new {idClient} , commandType: CommandType.StoredProcedure);
+                var converteData = new DetailedList();
 
-                return Data?.FirstOrDefault();
+                if (Data.Any())
+                {
+                    var firstData = Data.FirstOrDefault();
+
+                    converteData.DebtorsID = firstData.DebtorsID;
+                    converteData.Phone = firstData.Phone;
+                    converteData.Audit_CreatedOnDate = firstData.Audit_CreatedOnDate;
+                    converteData.Debt = firstData.Debt;
+                    converteData.Detail = firstData.Detail;
+                    converteData.Name = firstData.Name;
+                    converteData.ListaDeudas = string.IsNullOrEmpty(firstData.ListaDeudas) ? null : JsonConvert.DeserializeObject<List<DebtRegisterModel>>(firstData.ListaDeudas);
+                    converteData.AmountPaid = firstData.AmountPaid;
+                }
+
+
+                return converteData;
             }
             catch (SqlException ex)
             {
