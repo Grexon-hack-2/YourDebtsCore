@@ -41,7 +41,16 @@ builder.Services.AddScoped<IDebtRepository, DebtRepository>(option => new DebtRe
 
 builder.Services.AddHttpContextAccessor();
 
-var keyBytes = Encoding.ASCII.GetBytes(key);    
+var keyBytes = Encoding.ASCII.GetBytes(key);
+
+builder.Services.AddCors(option =>
+{
+    option.AddPolicy("AllowAngularApp",
+        builder => builder.WithOrigins("http://localhost:8100")
+                           .AllowAnyMethod()
+                           .AllowAnyHeader()
+        );
+});
 
 builder.Services.AddAuthentication(config =>
 {
@@ -72,6 +81,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowAngularApp");
 
 app.UseHttpsRedirection();
 
