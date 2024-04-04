@@ -25,8 +25,9 @@ namespace YourDebtsCore.Repositories
             var NameUser = register.User;
             var Password = Encript.GetSha256(register.Password);
             var Email = register.Email;
-            var sql = "INSERT INTO UserAdmin VALUES (@UserAdminID, @NameUser, @Password, @Email)";
-            var rowAffect = conn.Execute(sql, new { UserAdminID, NameUser, Password, Email });
+            var PersonName = register.Name;
+            var sql = "INSERT INTO UserAdmin VALUES (@UserAdminID, @NameUser, @Password, @Email, @PersonName)";
+            var rowAffect = conn.Execute(sql, new { UserAdminID, NameUser, Password, Email, PersonName });
 
             if (rowAffect == 0) throw new Exception("Error DB: Registro no ingresado");
             else return "Usuario ingresado satisfactoriamente";

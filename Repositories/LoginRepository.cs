@@ -23,10 +23,10 @@ namespace YourDebtsCore.Repositories
             connection.Open();
             var userName = request.User;
             var pass = Encript.GetSha256(request.Password);
-            string sql = "SELECT top 1 * FROM UserAdmin where NameUser=@UserName and Password=@Password";
+            string sql = "SELECT top 1 UserAdminID, NameUser, Email, PersonName FROM UserAdmin where NameUser=@UserName and Password=@Password";
             var user = connection.QueryFirstOrDefault<DataUserModel>(sql, new { userName , Password = pass});
 
-            if(user == null) throw new Exception("Usuario no encontrado!!");
+            if(user == null) throw new Exception("Usuario o contraseña equivocada!!");
 
             return user;
         }
