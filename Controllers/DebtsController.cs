@@ -40,6 +40,13 @@ namespace YourDebtsCore.Controllers
             return Ok(await _debtService.InsertDebt(value));
         }
 
+        [HttpPost]
+        [Route("AddAbonoToUser")]
+        public async Task<IActionResult> PayTheDebt([FromBody] PayDebtsModel value)
+        {
+            return Ok(await _debtService.InsertPay(value));
+        }
+
         //// PUT api/<DebtsController>/5
         //[HttpPut("{id}")]
         //public void Put(int id, [FromBody] string value)

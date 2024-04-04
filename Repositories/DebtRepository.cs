@@ -7,6 +7,7 @@ namespace YourDebtsCore.Repositories
     public interface IDebtRepository
     {
         Task<string> InsertDebt(DebtRegisterModel debtRegister);
+        Task<string> InsertPay(PayDebtsModel debtRegister);
     }
     public class DebtRepository: IDebtRepository
     {
@@ -43,6 +44,41 @@ namespace YourDebtsCore.Repositories
                     return "Deuda agregada exitosamente";
                 }
                 return "La deuda no pudo ser agregada en la base de datos";
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<string> InsertPay(PayDebtsModel debtRegister)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connStringDB);
+                await conn.OpenAsync();
+
+                string sp = "Insert_Pay_Debts";
+
+                SqlCommand cmd = new(sp, conn)
+                {
+                    CommandType = CommandType.StoredProcedure,
+                };
+                cmd.Parameters.AddWithValue("@AbonoID", Guid.NewGuid());
+                cmd.Parameters.AddWithValue("@DebtorsID", debtRegister.DebtorsID);
+                cmd.Parameters.AddWithValue("@AmountPaid", debtRegister.AmountPaid);
+
+                var rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+                if (rowsAffected > 0)
+                {
+                    return "El abono a sido ingresado exitosamente";
+                }
+                return "Ha ocurrido un error en la base de datos";
             }
             catch (SqlException ex)
             {

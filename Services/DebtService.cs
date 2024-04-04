@@ -6,6 +6,7 @@ namespace YourDebtsCore.Services
     public interface IDebtService
     {
         Task<string> InsertDebt(DebtRegisterModel debtRegister);
+        Task<string> InsertPay(PayDebtsModel debtRegister);
     }
 
     public class DebtService: IDebtService
@@ -20,6 +21,11 @@ namespace YourDebtsCore.Services
         public async Task<string> InsertDebt(DebtRegisterModel debtRegister)
         {
             return await _debtRepository.InsertDebt(debtRegister);
+        }
+
+        public async Task<string> InsertPay(PayDebtsModel debtRegister)
+        {
+            return await _debtRepository.InsertPay(debtRegister);
         }
     }
 }
