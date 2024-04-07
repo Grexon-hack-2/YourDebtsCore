@@ -49,7 +49,7 @@ namespace YourDebtsCore.Repositories
                 using var conn = new SqlConnection(_connStringDB);
                 await conn.OpenAsync();
 
-                var sql = "INSERT INTO Products Values(@ProductID, @Name, @UnitPrice, @QuantityInStock, @MoneyInvested, @IdAdmin)";
+                var sql = "INSERT INTO Products Values(@ProductID, @Name, @UnitPrice, @QuantityInStock, @MoneyInvested, @IdAdmin, @QuantityPurchased)";
 
                 var dataInsert = new
                 {
@@ -58,7 +58,8 @@ namespace YourDebtsCore.Repositories
                     product.UnitPrice,
                     product.QuantityInStock,
                     product.MoneyInvested,
-                    IdAdmin = idAdmin
+                    IdAdmin = idAdmin,
+                    QuantityPurchased = product.QuantityInStock
                 };
 
                 var rowAffected = await conn.ExecuteAsync(sql, dataInsert);
