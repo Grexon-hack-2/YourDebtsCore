@@ -17,5 +17,6 @@ namespace YourDebtsCore.Base.Models
 
         [Required(ErrorMessage = "El dinero invertido es obligatorio")]
         public decimal MoneyInvested { get; set; }
+        public decimal? QuantityPurchased { get; set; }
     }
 }
