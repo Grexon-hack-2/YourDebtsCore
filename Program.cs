@@ -17,6 +17,7 @@ builder.Services.AddSwaggerGen();
 
 var connString = builder.Configuration.GetConnectionString("Conn");
 var key = builder.Configuration.GetValue<string>("JwtSettings:key");
+var urlCors = builder.Configuration.GetValue<string>("URLCors");
 
 // Register and login
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>(option => new AuthorizationService(new LoginRepository(connString),value: key));
@@ -46,7 +47,7 @@ var keyBytes = Encoding.ASCII.GetBytes(key);
 builder.Services.AddCors(option =>
 {
     option.AddPolicy("AllowAngularApp",
-        builder => builder.WithOrigins("http://localhost:8100")
+        builder => builder.WithOrigins(urlCors)
                            .AllowAnyMethod()
                            .AllowAnyHeader()
         );
@@ -80,6 +81,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+//app.UseSwagger();
+//app.UseSwaggerUI();
 
 app.UseCors("AllowAngularApp");
 
