@@ -54,7 +54,7 @@ namespace YourDebtsCore.Repositories
                     Name = debtor.Name,
                     Phone = debtor.Phone,
                     Debt = debtor.Debt,
-                    Audit_CreatedOnDate = debtor.Audit_CreatedOnDate,
+                    Audit_CreatedOnDate = DateTimeOffset.Now,
                     Detail = debtor.Detail,
                     UserAdminID = userId
                 };
