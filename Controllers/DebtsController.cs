@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using YourDebtsCore.Base.Models;
+using YourDebtsCore.Base.Validations;
 using YourDebtsCore.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -13,9 +14,11 @@ namespace YourDebtsCore.Controllers
     public class DebtsController : ControllerBase
     {
         private readonly IDebtService _debtService;
-        public DebtsController(IDebtService debtService) 
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public DebtsController(IDebtService debtService, IHttpContextAccessor httpContextAccessor) 
         { 
             _debtService = debtService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         //// GET: api/<DebtsController>
@@ -26,11 +29,27 @@ namespace YourDebtsCore.Controllers
         //}
 
         //// GET api/<DebtsController>/5
-        //[HttpGet("{id}")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
+        [HttpGet]
+        [Route("GetAllOtherDebts")]
+        public async Task<IActionResult> GetAllOtherDebts()
+        {
+            var context = _httpContextAccessor.HttpContext;
+            var (currentUser, expired) = ValidationToken.Handler(context);
+            if (expired) return Unauthorized("Token Expirado");
+
+            return Ok(await _debtService.GetAllOtherDebts(currentUser.UserAdminID));
+        }
+
+        [HttpGet]
+        [Route("GetOtherDebtById")]
+        public async Task<IActionResult> GetOtherDebtById([FromQuery] Guid debtorID)
+        {
+            var context = _httpContextAccessor.HttpContext;
+            var (currentUser, expired) = ValidationToken.Handler(context);
+            if (expired) return Unauthorized("Token Expirado");
+
+            return Ok(await _debtService.GetOtherDebtById(currentUser.UserAdminID, debtorID));
+        }
 
         // POST api/<DebtsController>
         [HttpPost]
@@ -45,6 +64,17 @@ namespace YourDebtsCore.Controllers
         public async Task<IActionResult> PayTheDebt([FromBody] PayDebtsModel value)
         {
             return Ok(await _debtService.InsertPay(value));
+        }
+
+        [HttpPost]
+        [Route("InsertingOtherDebt")]
+        public async Task<IActionResult> InsertingOtherDebt([FromBody] OtherDebtsRequestModel value)
+        {
+            var context = _httpContextAccessor.HttpContext;
+            var (currentUser, expired) = ValidationToken.Handler(context);
+            if (expired) return Unauthorized("Token Expirado");
+
+            return Ok(await _debtService.InsertOtherDebt(value, currentUser.UserAdminID));
         }
 
         //// PUT api/<DebtsController>/5

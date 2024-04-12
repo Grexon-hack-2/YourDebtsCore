@@ -7,6 +7,9 @@ namespace YourDebtsCore.Services
     {
         Task<string> InsertDebt(DebtRegisterModel debtRegister);
         Task<string> InsertPay(PayDebtsModel debtRegister);
+        Task<string> InsertOtherDebt(OtherDebtsRequestModel debt, Guid adminUser);
+        Task<List<OtherDebtsResponseModel>> GetAllOtherDebts(Guid userAdmin);
+        Task<OtherDebtsResponseModel> GetOtherDebtById(Guid userAdmin, Guid debtorId);
     }
 
     public class DebtService: IDebtService
@@ -26,6 +29,21 @@ namespace YourDebtsCore.Services
         public async Task<string> InsertPay(PayDebtsModel debtRegister)
         {
             return await _debtRepository.InsertPay(debtRegister);
+        }
+
+        public async Task<string> InsertOtherDebt(OtherDebtsRequestModel debt,Guid adminUser)
+        {
+            return await _debtRepository.InsertOtherDebt(debt,adminUser);
+        }
+
+        public async Task<List<OtherDebtsResponseModel>> GetAllOtherDebts(Guid userAdmin)
+        {
+            return await _debtRepository.GetDataOtherDebts(userAdmin);
+        }
+
+        public async Task<OtherDebtsResponseModel> GetOtherDebtById(Guid userAdmin, Guid debtorId)
+        {
+            return await _debtRepository.GetDataOtherDebtById(userAdmin,debtorId);
         }
     }
 }
