@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using Dapper;
+using System.Data;
 using System.Data.SqlClient;
 using YourDebtsCore.Base.Models;
 
@@ -8,6 +9,9 @@ namespace YourDebtsCore.Repositories
     {
         Task<string> InsertDebt(DebtRegisterModel debtRegister);
         Task<string> InsertPay(PayDebtsModel debtRegister);
+        Task<string> InsertOtherDebt(OtherDebtsRequestModel debt, Guid adminUser);
+        Task<List<OtherDebtsResponseModel>> GetDataOtherDebts(Guid userAdmin);
+        Task<OtherDebtsResponseModel> GetDataOtherDebtById(Guid userAdmin, Guid debtorId);
     }
     public class DebtRepository: IDebtRepository
     {
@@ -79,6 +83,91 @@ namespace YourDebtsCore.Repositories
                     return "El abono a sido ingresado exitosamente";
                 }
                 return "Ha ocurrido un error en la base de datos";
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<string> InsertOtherDebt(OtherDebtsRequestModel debt, Guid adminUser)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connStringDB);
+                await conn.OpenAsync();
+
+                string sp = "Insert_OtherDebts";
+
+                SqlCommand cmd = new(sp, conn)
+                {
+                    CommandType = CommandType.StoredProcedure,
+                };
+                cmd.Parameters.AddWithValue("@UserAdminID", adminUser);
+                cmd.Parameters.AddWithValue("@DebtorsID", debt.DebtorsID);
+                cmd.Parameters.AddWithValue("@DebtorName", debt.DebtorName);
+                cmd.Parameters.AddWithValue("@Debt", debt.Debt);
+                cmd.Parameters.AddWithValue("@NameDebt", debt.NameDebt);
+
+                var rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+                if (rowsAffected > 0)
+                {
+                    return "La deuda a sido ingresada exitosamente";
+                }
+                return "Ha ocurrido un error en la base de datos";
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<OtherDebtsResponseModel>> GetDataOtherDebts(Guid userAdmin)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connStringDB);
+                await conn.OpenAsync();
+
+                string text = "select * from OtherDebts where UserAdminID = @userAdmin";
+
+                var result = await conn.QueryAsync<OtherDebtsResponseModel>(text, new {userAdmin});
+
+                return result.ToList();
+
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<OtherDebtsResponseModel> GetDataOtherDebtById(Guid userAdmin, Guid debtorId)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connStringDB);
+                await conn.OpenAsync();
+
+                string text = "select * from OtherDebts where UserAdminID = @userAdmin and DebtorsID = @debtorId";
+
+                var result = await conn.QueryAsync<OtherDebtsResponseModel>(text, new { userAdmin, debtorId });
+
+                return result.ToList().FirstOrDefault();
+
             }
             catch (SqlException ex)
             {
