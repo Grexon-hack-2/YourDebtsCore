@@ -39,6 +39,10 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>(option => new 
 builder.Services.AddScoped<IDebtService, DebtService>();
 builder.Services.AddScoped<IDebtRepository, DebtRepository>(option => new DebtRepository(connString));
 
+// Histories
+builder.Services.AddScoped<IHistoryService, HistoryService>();
+builder.Services.AddScoped<IHistoryRepository, HistoryRepository>(option => new HistoryRepository(connString));
+
 
 builder.Services.AddHttpContextAccessor();
 
@@ -78,8 +82,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI();
 }
 
 //app.UseSwagger();
