@@ -64,8 +64,13 @@ namespace YourDebtsCore.Repositories
 
                 var rowAffected = await conn.ExecuteAsync(sql, dataInsert);
 
-                if (rowAffected > 0) return "El producto fue agregado con exito";
-                else return "El producto no pudo ser agregado";
+                if (rowAffected > 0)
+                {
+                    await InsertHistoryProduct(product, idAdmin, conn);
+                    return "El producto fue agregado con exito";
+                }
+                else 
+                    return "El producto no pudo ser agregado";
 
             }
             catch (SqlException ex)
@@ -99,6 +104,36 @@ namespace YourDebtsCore.Repositories
             catch (Exception ex)
             {
                 throw new Exception($"No pudo ser eliminado el producto: {ID} | Error: {ex.Message}");
+            }
+        }
+
+        private async Task InsertHistoryProduct(ProductModel product, Guid idAdmin, SqlConnection conn)
+        {
+            try
+            {
+
+                var sql = "INSERT INTO History_Products(UserAdminID, Name, UnitPrice, MoneyInvested, QuentityPurchased) Values(@IdAdmin, @Name, @UnitPrice, @MoneyInvested, @QuantityPurchased)";
+
+                var dataInsert = new
+                {
+                    IdAdmin = idAdmin,
+                    product.Name,
+                    product.UnitPrice,
+                    product.MoneyInvested,
+                    QuantityPurchased = product.QuantityInStock
+                };
+
+                await conn.ExecuteAsync(sql, dataInsert);
+
+
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
     }
