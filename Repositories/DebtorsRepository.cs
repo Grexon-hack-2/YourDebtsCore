@@ -27,7 +27,7 @@ namespace YourDebtsCore.Repositories
             {
                 using var connection = new SqlConnection(_connectionString);
                 connection.Open();
-                string sql = "SELECT * FROM Debtors where UserAdminID = @ID";
+                string sql = "SELECT (SELECT SUM(AmountPaid) from AbonoDebt where DebtorsID = dt.DebtorsID) as AmountPaid, * FROM Debtors dt where dt.UserAdminID = @ID";
                 return connection.Query<DebtorModel>(sql, new { ID }).ToList();
             }
             catch (SqlException ex)
