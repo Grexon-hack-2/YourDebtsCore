@@ -47,11 +47,11 @@ namespace YourDebtsCore.Base.Autorization
             return tokenCreado;
         }
 
-        public AuthorizationResponse GetAuthorizationToken(AuthorizationRequest authorization)
+        public AuthorizationResponse GetAuthorizationToken(AuthorizationRequest authorization, bool isEncript = false)
         {
             try
             {
-                var usuario_encontrado = _loginRepository.Login(authorization);
+                var usuario_encontrado = _loginRepository.Login(authorization, isEncript);
 
                 string tokenActive = GenerarToken(JsonConvert.SerializeObject(usuario_encontrado));
 

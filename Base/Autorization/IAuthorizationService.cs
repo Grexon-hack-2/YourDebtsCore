@@ -4,6 +4,6 @@ namespace YourDebtsCore.Base.Autorization
 {
     public interface IAuthorizationService
     {
-        AuthorizationResponse GetAuthorizationToken(AuthorizationRequest authorization);
+        AuthorizationResponse GetAuthorizationToken(AuthorizationRequest authorization, bool isEncript = false);
     }
 }
