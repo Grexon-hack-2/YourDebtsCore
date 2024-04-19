@@ -7,5 +7,6 @@
         public string Password {  get; set; }
         public string Email { get; set; }
         public string PersonName { get; set; }
+        public string Image {  get; set; }
     }
 }
