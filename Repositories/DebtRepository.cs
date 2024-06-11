@@ -138,7 +138,7 @@ namespace YourDebtsCore.Repositories
                 using var conn = new SqlConnection(_connStringDB);
                 await conn.OpenAsync();
 
-                string text = "select * from OtherDebts where UserAdminID = @userAdmin";
+                string text = "select * from OtherDebts where UserAdminID = @userAdmin ORDER BY DebtorName ASC";
 
                 var result = await conn.QueryAsync<OtherDebtsResponseModel>(text, new {userAdmin});
 

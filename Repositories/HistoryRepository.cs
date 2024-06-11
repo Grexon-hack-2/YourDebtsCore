@@ -25,7 +25,7 @@ namespace YourDebtsCore.Repositories
                 using var conn = new SqlConnection(_connectionString);
                 conn.OpenAsync().Wait();
 
-                var text = "SELECT * FROM History_OtherDebts where UserAdminID = @adminID";
+                var text = "SELECT * FROM History_OtherDebts where UserAdminID = @adminID ORDER BY DebtorName ASC";
 
                 var response = await conn.QueryAsync<History_OtherDebt>(text, new {adminID});
 
@@ -49,7 +49,7 @@ namespace YourDebtsCore.Repositories
                 using var conn = new SqlConnection(_connectionString);
                 conn.OpenAsync().Wait();
 
-                var text = "SELECT * FROM History_AbonoDebt where UserAdminID = @adminID";
+                var text = "SELECT * FROM History_AbonoDebt where UserAdminID = @adminID ORDER BY NameDebtor ASC";
 
                 var response = await conn.QueryAsync<History_Abono>(text, new { adminID });
 
@@ -73,7 +73,7 @@ namespace YourDebtsCore.Repositories
                 using var conn = new SqlConnection(_connectionString);
                 conn.OpenAsync().Wait();
 
-                var text = "SELECT * FROM History_Products where UserAdminID = @adminID";
+                var text = "SELECT * FROM History_Products where UserAdminID = @adminID ORDER BY Name ASC";
 
                 var response = await conn.QueryAsync<History_Product>(text, new { adminID });
 
