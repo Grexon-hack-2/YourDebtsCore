@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using System.Data;
 using System.Data.SqlClient;
 using YourDebtsCore.Base.Models;
 
@@ -25,7 +26,7 @@ namespace YourDebtsCore.Repositories
                 using var connection = new SqlConnection(_connStringDB);
                 await connection.OpenAsync();
 
-                var sql = "SELECT * FROM Products where IdAdmin=@ID";
+                var sql = "SELECT * FROM Products where IdAdmin=@ID ORDER BY Name ASC";
 
                 var data = connection.Query<ProductModel>(sql,new { ID });
 
@@ -49,7 +50,7 @@ namespace YourDebtsCore.Repositories
                 using var conn = new SqlConnection(_connStringDB);
                 await conn.OpenAsync();
 
-                var sql = "INSERT INTO Products Values(@ProductID, @Name, @UnitPrice, @QuantityInStock, @MoneyInvested, @IdAdmin, @QuantityPurchased)";
+                var spSQL = "InsertProduct";
 
                 var dataInsert = new
                 {
@@ -62,14 +63,20 @@ namespace YourDebtsCore.Repositories
                     QuantityPurchased = product.QuantityInStock
                 };
 
-                var rowAffected = await conn.ExecuteAsync(sql, dataInsert);
+                var rowAffected = await conn.QueryAsync<InsertAndUpdateModel>(spSQL, dataInsert, commandType: CommandType.StoredProcedure);
 
-                if (rowAffected > 0)
+                var resultData = rowAffected.FirstOrDefault();
+
+                if (resultData.Insertado > 0)
                 {
                     await InsertHistoryProduct(product, idAdmin, conn);
                     return "El producto fue agregado con exito";
                 }
-                else 
+                else if (resultData.Actualizado > 0)
+                {
+                    return "El producto fua actualizado con exito"; 
+                }
+                else
                     return "El producto no pudo ser agregado";
 
             }
